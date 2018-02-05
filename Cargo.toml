@@ -1,7 +1,15 @@
 [package]
 name = "launchdarkly"
-version = "0.1.0"
+version = "0.0.0"
 authors = ["softprops <d.tangren@gmail.com>"]
+description = "Rust interface for launch darkly"
+documentation = "https://softprops.github.io/hubcaps"
+homepage = "https://github.com/softprops/launchdarkly"
+repository = "https://github.com/softprops/launchdarkly"
+keywords = ["hyper", "launchdarkly", "feature-flags", "flags", "canary"]
+license = "MIT"
+categories = ["api-bindings", "web-programming::http-client"]
+readme = "README.md"
 
 [dependencies]
 futures = "0.1"
