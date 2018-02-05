@@ -290,22 +290,23 @@ where
                 client.http.request(req).map_err(Error::from)
             });
         Box::new(response.and_then(move |response| {
-            if response.status().is_success() {
-                Either::A(response.body().concat2().map_err(Error::from).and_then(
-                    move |response_body| {
-                        debug!("{}", String::from_utf8_lossy(&response_body));
-                        serde_json::from_slice::<Out>(&response_body)
-                            .map_err(|error| ErrorKind::Codec(error).into())
-                    },
-                ))
-            } else {
-                Either::B(response.body().concat2().map_err(Error::from).and_then(
-                    move |response_body| {
-                        debug!("{}", String::from_utf8_lossy(&response_body));
-                        Err(String::from("fail").into()).into_future()
-                    },
-                ))
-            }
+            let success = response.status().is_success();
+            response
+                .body()
+                .concat2()
+                .map_err(Error::from)
+                .and_then(move |response_body| {
+                    debug!("{}", String::from_utf8_lossy(&response_body));
+                    if success {
+                        Either::A(
+                            serde_json::from_slice::<Out>(&response_body)
+                                .map_err(|error| ErrorKind::Codec(error).into())
+                                .into_future(),
+                        )
+                    } else {
+                        Either::B(Err(String::from("fail").into()).into_future())
+                    }
+                })
         }))
     }
 }
